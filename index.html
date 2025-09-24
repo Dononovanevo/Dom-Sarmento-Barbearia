@@ -11,22 +11,30 @@
       --accent:#22d3ee; --accent-2:#a78bfa; --ok:#34d399; --brand:#f59e0b;
     }
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background:radial-gradient(1000px 600px at 80% -20%, rgba(34,211,238,.08), transparent),
-                 radial-gradient(1000px 600px at -20% 120%, rgba(167,139,250,.10), transparent),
-                 var(--bg);
-      color:var(--text); min-height:100svh; display:flex; align-items:center; justify-content:center; padding:24px;}
+    body{
+      margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(1000px 600px at 80% -20%, rgba(34,211,238,.08), transparent),
+        radial-gradient(1000px 600px at -20% 120%, rgba(167,139,250,.10), transparent),
+        var(--bg);
+      color:var(--text); min-height:100svh; display:flex; align-items:center; justify-content:center; padding:24px;
+    }
     .wrap{width:100%;max-width:520px}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:22px; box-shadow:0 10px 30px rgba(0,0,0,.25); backdrop-filter:blur(8px);}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:22px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25); backdrop-filter:blur(8px);
+    }
     header{display:flex;gap:14px;align-items:center;margin-bottom:12px}
     .logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--brand),var(--accent-2));display:grid;place-items:center;font-size:26px}
     h1{font-size:22px;margin:0}
     .sub{color:var(--muted);font-size:14px}
     .list{display:grid;gap:12px;margin:18px 0 10px}
-    .btn{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+    .btn{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
       border:1px solid rgba(255,255,255,.10); border-radius:14px; padding:16px; text-decoration:none; color:var(--text);
-      display:flex; align-items:center; justify-content:space-between; gap:16px; transition:.15s transform, .15s background;}
+      display:flex; align-items:center; justify-content:space-between; gap:16px; transition:.15s transform, .15s background;
+    }
     .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.06)}
     .btn .l{display:flex;align-items:center;gap:12px}
     .btn .ico{font-size:20px}
@@ -58,7 +66,7 @@
           <div class="l"><span class="ico">💬</span><div><div>WhatsApp</div><small>Fale direto com a recepção</small></div></div><span>→</span>
         </a>
 
-        <!-- Wi-Fi: copia senha, mostra QR e abre Config. no Android -->
+        <!-- Wi-Fi -->
         <a class="btn" id="wifiBtn" href="#" onclick="openWifiSmart(event)">
           <div class="l"><span class="ico">📶</span><div><div>Conectar ao Wi-Fi</div><small>Toque para copiar senha / abrir Wi-Fi</small></div></div><span>→</span>
         </a>
@@ -68,15 +76,9 @@
           <div class="l"><span class="ico">📅</span><div><div>Agendar horário</div><small>Reserve seu corte no AppBarber</small></div></div><span>→</span>
         </a>
 
-        <!-- Avaliações Google (link atual que você passou) -->
-        <a class="btn" id="reviewBtn"
-           href="https://maps.app.goo.gl/SMNhf1NKrzzfi4d59?g_st=aw"
-           target="_blank" rel="noopener">
-          <div class="l"><span class="ico">⭐</span><div>
-            <div>Avaliações no Google</div>
-            <small>Conte como foi sua experiência</small>
-          </div></div>
-          <span>→</span>
+        <!-- Avaliações Google -->
+        <a class="btn" id="reviewBtn" href="https://maps.app.goo.gl/SMNhf1NKrzzfi4d59?g_st=aw" target="_blank" rel="noopener">
+          <div class="l"><span class="ico">⭐</span><div><div>Avaliações no Google</div><small>Conte como foi sua experiência</small></div></div><span>→</span>
         </a>
 
         <!-- Instagram -->
@@ -116,56 +118,91 @@
       <div style="display:grid;gap:12px;place-items:center;text-align:center">
         <img id="wifiQR" alt="QR do Wi-Fi" width="220" height="220" style="border-radius:12px;background:#0b0e1a;padding:6px"/>
         <div id="wifiInfo" style="color:var(--muted);font-size:14px"></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+        <div id="wifiButtons" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
           <button class="copy" onclick="copyText(ssid)">Copiar SSID</button>
           <button class="copy alt" onclick="copyText(pass)">Copiar senha</button>
           <button class="copy" id="openSettingsBtn" style="display:none" onclick="openAndroidWifi()">Abrir Wi-Fi (Android)</button>
         </div>
-        <small style="color:var(--muted)">Aponte a câmera para o QR para conectar automaticamente (recomendado).</small>
+        <small id="iosHint" style="color:var(--muted);display:none">
+          No iPhone: abra a <b>Câmera</b> e aponte para este QR para <b>conectar automaticamente</b>.
+        </small>
+        <small id="genericHint" style="color:var(--muted)">Aponte a câmera para o QR para conectar automaticamente (recomendado).</small>
       </div>
     </div>
   </div>
 
   <script>
-    // Lê parâmetros da URL para SSID/Senha/Review (opcional)
-    const p = new URLSearchParams(location.search);
-    let ssid = p.get('ssid') || 'Sua_Rede';
-    let pass = p.get('pass') || 'Sua_Senha';
-    let auth = p.get('wi') || 'WPA'; // WPA/WEP/nopass
+    // -------- Config dinâmica --------
+    // FIXO por padrão (funciona sem parâmetros) + override por URL (?ssid=&pass=&wi=&review=)
+    const params = new URLSearchParams(location.search);
+    let ssid  = params.get('ssid')   || 'Kamila_Flognet';
+    let pass  = params.get('pass')   || '91011070';
+    let auth  = params.get('wi')     || 'WPA'; // WPA / WEP / nopass
+    const reviewParam = params.get('review');
 
-    // Se vier ?review= na URL, substitui o link do botão
-    (function(){
-      const reviewParam = p.get('review');
-      if(reviewParam){
-        const r = document.getElementById('reviewBtn');
-        r.href = reviewParam;
-      }
-    })();
-
-    // Utilidades de cópia
-    function copy(sel, btn){
-      const el = document.querySelector(sel);
-      const val = (el?.value || el?.textContent || '').trim();
-      if(!val){ btn.textContent = 'Vazio'; setTimeout(()=>btn.textContent = btn.classList.contains('alt') ? 'Copiar código' : 'Copiar chave',1200); return; }
-      navigator.clipboard.writeText(val).then(()=>{ const old = btn.textContent; btn.textContent = 'Copiado! ✅'; setTimeout(()=>btn.textContent = old,1200); });
+    // aplica review via parâmetro, se vier
+    if (reviewParam) {
+      const rb = document.getElementById('reviewBtn');
+      if (rb) rb.href = reviewParam;
     }
-    function copyText(text){ navigator.clipboard.writeText(text||'').then(()=>alert('Copiado para a área de transferência!')); }
 
-    // Wi-Fi inteligente: copia senha, mostra QR e tenta abrir Config. no Android
+    // -------- Utilidades --------
+    function copy(selector, btn){
+      const el = document.querySelector(selector);
+      const val = (el?.value || el?.textContent || '').trim();
+      if(!val){
+        btn.textContent = 'Vazio';
+        setTimeout(()=>btn.textContent = btn.classList.contains('alt') ? 'Copiar código' : 'Copiar chave', 1200);
+        return;
+      }
+      navigator.clipboard.writeText(val).then(()=>{
+        const old = btn.textContent;
+        btn.textContent = 'Copiado! ✅';
+        setTimeout(()=>btn.textContent = old, 1200);
+      });
+    }
+    function copyText(text){
+      navigator.clipboard.writeText(text||'').then(()=>{
+        // feedback simples
+        try{ if (window.Toastify) Toastify({text:"Copiado!",gravity:"bottom",duration:1200}).showToast(); }catch(e){}
+      });
+    }
+
+    // -------- Wi-Fi --------
     async function openWifiSmart(e){
       e?.preventDefault();
-      try{ await navigator.clipboard.writeText(pass); }catch(e){}
+
+      // Copia a senha para agilizar
+      try { await navigator.clipboard.writeText(pass); } catch(e){}
+
+      // Monta o QR padrão Wi-Fi
       const wifiString = `WIFI:T:${auth};S:${ssid};P:${pass};;`;
-      const qr = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(wifiString);
-      document.getElementById('wifiQR').src = qr;
+      const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(wifiString);
+      document.getElementById('wifiQR').src = qrUrl;
       document.getElementById('wifiInfo').textContent = `Rede: ${ssid}`;
-      if(/Android/i.test(navigator.userAgent)){
-        document.getElementById('openSettingsBtn').style.display='inline-block';
-      }
+
+      // Ajusta dicas/ações por plataforma
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      const isIOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+      // Botão para abrir configurações só no Android
+      document.getElementById('openSettingsBtn').style.display = isAndroid ? 'inline-block' : 'none';
+
+      // Dica específica no iOS
+      document.getElementById('iosHint').style.display = isIOS ? 'block' : 'none';
+      document.getElementById('genericHint').style.display = isIOS ? 'none'  : 'block';
+
+      // Mostra modal
       document.getElementById('wifiModal').style.display = 'flex';
     }
+
     function closeWifi(){ document.getElementById('wifiModal').style.display = 'none'; }
-    function openAndroidWifi(){ location.href = 'intent:#Intent;action=android.settings.WIFI_SETTINGS;end'; }
+
+    // Tenta abrir configurações no Android (alguns browsers podem bloquear)
+    function openAndroidWifi(){
+      location.href = 'intent:#Intent;action=android.settings.WIFI_SETTINGS;end';
+    }
   </script>
 </body>
 </html>
+
